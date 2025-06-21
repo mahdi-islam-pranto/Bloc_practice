@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'pages/country_list.dart';
+
 void main() {
   runApp(const MyApp());
 }
 
 // bloc provider logic class using Cubit
 class CounterLogic extends Cubit<int> {
+  // initial state
   CounterLogic() : super(0);
 
   // all logic functions
+
   void increment_func() {
     return emit(state + 1);
   }
@@ -25,7 +29,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // wrap the app with MultiBlocProvider for accessibility of bloc
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => CounterLogic())],
+      providers: [
+        BlocProvider(create: (context) => CounterLogic()),
+        BlocProvider(create: (context) => CountryListLogic())
+      ],
       child: MaterialApp(home: const HomeScreen()),
     );
   }
@@ -36,7 +43,40 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Counter Page')),
+      appBar: AppBar(
+        title: const Text('Counter Page'),
+        backgroundColor: Colors.blue,
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              // make the header text center aligned
+
+              child: Text('Learn BLoc'),
+            ),
+            ListTile(
+              title: const Text('Country List API'),
+              onTap: () {
+                // got to country list page
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CountryListPage()));
+              },
+            ),
+            ListTile(
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
