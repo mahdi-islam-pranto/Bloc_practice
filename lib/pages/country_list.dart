@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:learn_bloc/pages/country_details.dart';
 
 // Bloc provider logic class using Cubit
 class CountryListLogic extends Cubit<Map<String, dynamic>> {
@@ -43,18 +44,28 @@ class CountryListPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Country List API')),
+      // build the ui with BlocBuilder
       body: BlocBuilder<CountryListLogic, Map<String, dynamic>>(
           builder: (context, data) {
+        // check the state
         if (data['isLoading'] == true) {
           return const Center(child: CircularProgressIndicator());
         } else if (data['error'] != null) {
           return Center(child: Text(data['error']));
         } else {
           return ListView.builder(itemBuilder: (context, index) {
+            // display the country list
             return ListTile(
               leading: Image.network(data['countryList'][index]['flag']),
               title: Text(data['countryList'][index]['name']),
               subtitle: Text(data['countryList'][index]['capital']),
+              onTap: () {
+                // navigate to country details page with country name
+                context
+                    .read<NavigateToCountryDetailsPageLogic>()
+                    .navigateToCountryDetailsPage(
+                        context, data['countryList'][index]);
+              },
             );
           });
         }

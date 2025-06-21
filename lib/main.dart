@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'pages/country_details.dart';
 import 'pages/country_list.dart';
 
 void main() {
@@ -31,7 +32,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => CounterLogic()),
-        BlocProvider(create: (context) => CountryListLogic())
+        BlocProvider(create: (context) => CountryListLogic()),
+        BlocProvider(create: (context) => NavigateToCountryDetailsPageLogic())
       ],
       child: MaterialApp(home: const HomeScreen()),
     );
