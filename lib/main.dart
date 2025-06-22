@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'pages/country_details.dart';
 import 'pages/country_list.dart';
+import 'pages/todolist.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,9 +34,10 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => CounterLogic()),
         BlocProvider(create: (context) => CountryListLogic()),
-        BlocProvider(create: (context) => NavigateToCountryDetailsPageLogic())
+        BlocProvider(create: (context) => NavigateToCountryDetailsPageLogic()),
+        BlocProvider(create: (context) => AddTaskLogic()),
       ],
-      child: MaterialApp(home: const HomeScreen()),
+      child: const MaterialApp(home: HomeScreen()),
     );
   }
 }
@@ -71,9 +73,12 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              title: const Text('Settings'),
+              title: const Text('Task list'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ToDoListPage()));
               },
             ),
           ],
@@ -85,7 +90,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             // display the number count with BlocBuilder
             BlocBuilder<CounterLogic, int>(builder: (context, numberCount) {
-              return Text("$numberCount", style: TextStyle(fontSize: 40));
+              return Text("$numberCount", style: const TextStyle(fontSize: 40));
             }),
             const SizedBox(height: 20),
             ElevatedButton(
