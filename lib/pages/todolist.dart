@@ -1,16 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// add show/hide alert dialog logic class using Cubit
-class ShowHideAlertDialogLogic extends Cubit<bool> {
-  ShowHideAlertDialogLogic() : super(false);
-
-  // logic function
-  void showHideAlertDialog() {
-    emit(!state);
-  }
-}
-
 // add task to tasklist logic class using Cubit
 class AddTaskLogic extends Cubit<Map<String, dynamic>> {
   AddTaskLogic()
@@ -20,20 +10,16 @@ class AddTaskLogic extends Cubit<Map<String, dynamic>> {
           'taskList': [],
         });
 
-  // logic function
-  void addTask(String taskName) {
-    emit({
-      'taskName': taskName,
-      'error': null,
-    });
-  }
-
   // logic function to add task to task list
   void addTaskToTaskList(String taskName) {
+    // updated list with previous list
+    final List<String> updatedList = List<String>.from(state['taskList']);
+    updatedList.add(taskName);
+    // update the state
     emit({
       'taskName': taskName,
       'error': null,
-      'taskList': [taskName],
+      'taskList': updatedList,
     });
   }
 }
@@ -53,19 +39,21 @@ class ToDoListPage extends StatelessWidget {
       // build the ui with BlocBuilder
       body: BlocBuilder<AddTaskLogic, Map<String, dynamic>>(
           builder: (context, data) {
-        if (data['tasklist'] == null) {
+        if (data['taskList'] == null || data['taskList'].isEmpty) {
           return const Center(child: Text('No tasks added'));
         } else {
-          return ListView.builder(itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(data['taskList'][index]),
-            );
-          });
+          return ListView.builder(
+              itemCount: data['taskList'].length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(data['taskList'][index]),
+                );
+              });
         }
       }),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // context.read<ShowHideAlertDialogLogic>().showHideAlertDialog();
           // show alert dialog
           showDialog(
             context: context,
@@ -85,6 +73,9 @@ class ToDoListPage extends StatelessWidget {
                   TextButton(
                       onPressed: () {
                         // add task to bloc logic
+                        context
+                            .read<AddTaskLogic>()
+                            .addTaskToTaskList(taskNameController.text);
                         print(taskNameController.text);
                         Navigator.pop(context);
                       },
